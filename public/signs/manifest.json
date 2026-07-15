@@ -1,0 +1,44 @@
+{
+  "defaults": {
+    "wordHoldMs": 120,
+    "wordFadeMs": 250,
+    "letterHoldMs": 300,
+    "letterFadeMs": 120,
+    "restFadeMs": 450
+  },
+  "signs": [
+    {
+      "gloss": "REST",
+      "clip": "rest.json",
+      "type": "rest"
+    },
+    {
+      "gloss": "HELLO",
+      "clip": "hello.json",
+      "type": "word",
+      "nmf": {
+        "happy": 0.4
+      }
+    },
+    {
+      "gloss": "A",
+      "clip": "letter_a.json",
+      "type": "letter"
+    },
+    {
+      "gloss": "B",
+      "clip": "letter_b.json",
+      "type": "letter"
+    },
+    {
+      "gloss": "I",
+      "clip": "letter_i.json",
+      "type": "letter"
+    },
+    {
+      "gloss": "L",
+      "clip": "letter_l.json",
+      "type": "letter"
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PSL Sign Authoring</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      #app {
+        position: fixed;
+        inset: 0;
+      }
+      #app canvas {
+        display: block;
+      }
+      .author-panel {
+        position: fixed;
+        top: 14px;
+        right: 14px;
+        bottom: 14px;
+        width: 300px;
+        z-index: 10;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+      }
+      .author-title {
+        font-size: 15px;
+        font-weight: 650;
+        color: #1a1c20;
+        margin: 0;
+      }
+      .author-title a {
+        font-size: 12px;
+        font-weight: 500;
+        float: right;
+      }
+      .author-section {
+        border-top: 1px solid rgba(0, 0, 0, 0.07);
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .author-section h3 {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #7a808a;
+        margin: 0;
+      }
+      .author-status {
+        font-size: 12.5px;
+        color: #5a5f68;
+        margin: 0;
+        line-height: 1.4;
+        min-height: 1.2em;
+      }
+      .author-status.warn {
+        color: #a33;
+      }
+      video {
+        width: 100%;
+        border-radius: 8px;
+        background: #0d0f12;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+      }
+      video.mirrored {
+        transform: scaleX(-1);
+      }
+      .a-btn {
+        font: inherit;
+        font-size: 13px;
+        font-weight: 550;
+        color: #1a1c20;
+        background: #f2f3f5;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 8px;
+        padding: 7px 12px;
+        cursor: pointer;
+      }
+      .a-btn:hover:not(:disabled) {
+        background: #e8eaee;
+      }
+      .a-btn:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      .a-btn.rec {
+        background: #d6273b;
+        border-color: #d6273b;
+        color: #fff;
+      }
+      .a-btn.primary {
+        background: #0f62d6;
+        border-color: #0f62d6;
+        color: #fff;
+      }
+      .a-row {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .a-row > input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-size: 13px;
+        padding: 6px 8px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 7px;
+        text-transform: uppercase;
+      }
+      .a-row label {
+        font-size: 12.5px;
+        color: #5a5f68;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      select {
+        font: inherit;
+        font-size: 13px;
+        padding: 5px;
+        border-radius: 7px;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+      }
+      code.snippet {
+        display: block;
+        font-size: 11px;
+        background: #f0f1f4;
+        border-radius: 6px;
+        padding: 6px;
+        word-break: break-all;
+        user-select: all;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/author/main.ts"></script>
+  </body>
+</html>

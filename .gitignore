@@ -1,0 +1,10 @@
+node_modules
+dist
+*.local
+
+# Avatars are not committed:
+# - avatar.vrm is the user's own model (see README "Swapping the avatar")
+# - samples/ are third-party dev fixtures under their own licenses;
+#   fetch them with `npm run fetch:samples`
+public/avatar/*.vrm
+public/avatar/samples/
