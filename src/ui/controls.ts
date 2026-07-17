@@ -1,16 +1,32 @@
 import type { SignPlayer } from "../player/SignPlayer";
 import type { SignLibrary } from "../signs/library";
+import { translate, type Lexicon } from "../engine/translate";
 
 /**
- * Bottom control bar: gloss-sequence input, transport buttons, speed
- * slider, active-gloss indicator, and the panel of available glosses.
+ * Bottom control bar: text input (engine), gloss-sequence input, transport
+ * buttons, speed slider, active-gloss indicator, and the panel of
+ * available glosses.
  *
- * Input is a GLOSS SEQUENCE (space-separated labels), not natural
- * language — translation is the future engine's job.
+ * The gloss input is the renderer's native language; the text input above
+ * it runs the rule-based engine and writes its output INTO the gloss
+ * input before playing, so the text -> gloss -> sign seam stays visible.
  */
-export function createControls(player: SignPlayer, library: SignLibrary): void {
+export function createControls(player: SignPlayer, library: SignLibrary, lexicon: Lexicon | null): void {
   const bar = document.createElement("div");
   bar.className = "controls";
+
+  // ---- row 0: natural-language input -> engine ----
+  const textRow = document.createElement("div");
+  textRow.className = "ctl-row";
+
+  const textInput = document.createElement("input");
+  textInput.className = "ctl-input text";
+  textInput.placeholder = "English or Urdu text — translated to glosses, then signed";
+  textInput.spellcheck = false;
+  textInput.dir = "auto";
+
+  const translateBtn = button("Translate ▸", "ctl-btn");
+  textRow.append(textInput, translateBtn);
 
   // ---- row 1: input + transport ----
   const inputRow = document.createElement("div");
@@ -75,6 +91,7 @@ export function createControls(player: SignPlayer, library: SignLibrary): void {
     panel.appendChild(chip);
   }
 
+  if (lexicon) bar.append(textRow);
   bar.append(inputRow, speedRow, panel);
   document.body.appendChild(bar);
 
@@ -88,6 +105,21 @@ export function createControls(player: SignPlayer, library: SignLibrary): void {
   playBtn.addEventListener("click", doPlay);
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") doPlay();
+  });
+
+  const doTranslate = () => {
+    if (!lexicon) return;
+    const text = textInput.value.trim();
+    if (!text) return;
+    const { glosses, trace } = translate(text, lexicon);
+    console.info(`[engine] "${text}" ->`, glosses, trace);
+    if (glosses.length === 0) return;
+    input.value = glosses.join(" ");
+    doPlay();
+  };
+  translateBtn.addEventListener("click", doTranslate);
+  textInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") doTranslate();
   });
 
   pauseBtn.addEventListener("click", () => {

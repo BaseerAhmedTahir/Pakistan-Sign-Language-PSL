@@ -6,6 +6,7 @@ import { loadSignLibrary } from "./signs/library";
 import { SignPlayer } from "./player/SignPlayer";
 import { createHud } from "./ui/hud";
 import { createControls } from "./ui/controls";
+import { loadLexicon, type Lexicon } from "./engine/translate";
 
 async function bootstrap(): Promise<void> {
   const container = document.getElementById("app");
@@ -41,7 +42,15 @@ async function bootstrap(): Promise<void> {
   try {
     const library = await loadSignLibrary(avatar);
     player = new SignPlayer(avatar, library);
-    createControls(player, library);
+    // The engine is optional: if the lexicon is missing, the gloss input
+    // still works — the renderer never depends on the engine.
+    let lexicon: Lexicon | null = null;
+    try {
+      lexicon = await loadLexicon();
+    } catch (err) {
+      console.warn("[engine] lexicon unavailable — text input disabled:", err);
+    }
+    createControls(player, library, lexicon);
   } catch (err) {
     console.error("[signs] library failed to load:", err);
     hud.setStatus(`Sign library failed to load: ${(err as Error).message}`, true);

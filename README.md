@@ -37,6 +37,8 @@ dated HamNoSys → SiGML → JASigning pipeline.
   *Verified in-session: model loading, record → export → play-in-library round trip.
   Live webcam capture still needs a session with a physical camera (and the Mirror /
   Space-flip defaults confirmed on real footage).*
+- ✅ **Engine seed (Phase 2 start)** — rule-based English/Urdu text → gloss translation
+  behind the same `play()` contract; see "Translation engine (seed)" below.
 
 ## Run
 
@@ -102,13 +104,37 @@ npm run fetch:samples
 #       /?avatar=/avatar/samples/vrm1_twist.vrm    (VRM 1.0, pixiv/three-vrm)
 ```
 
-## Architecture contract (future translation engine)
+## Architecture contract (translation engine)
 
-The future engine (text → PSL) will output **only** a gloss sequence: `string[]` of uppercase
-sign labels, e.g. `["HELLO", "MY", "NAME", "A", "L", "I"]`. The renderer's sole public entry
-point is `SignPlayer.play(glossSequence): Promise<void>` (resolves when the avatar is back at
-rest). Unknown glosses are fingerspelled; unknown letters warn and are skipped. Nothing else
-couples the renderer to the engine.
+The engine outputs **only** a gloss sequence: `string[]` of uppercase sign labels, e.g.
+`["HELLO", "MY", "NAME", "A", "L", "I"]`. The renderer's sole public entry point is
+`SignPlayer.play(glossSequence): Promise<void>` (resolves when the avatar is back at rest).
+Unknown glosses are fingerspelled; unknown letters warn and are skipped. Nothing else couples
+the renderer to the engine — the seed engine below can be replaced by a statistical/neural
+model with zero renderer changes.
+
+## Translation engine (seed)
+
+[src/engine/translate.ts](src/engine/translate.ts) + [public/engine/lexicon.json](public/engine/lexicon.json)
+implement a rule-based English/Urdu text → gloss pipeline, wired to the text input above the
+gloss field (its output is written into the gloss input before playing, keeping the seam
+visible; the trace of every rule application goes to the console):
+
+1. normalize + tokenize (Latin lowercased; Urdu passes through; Urdu punctuation stripped)
+2. greedy longest-match phrase lookup ("thank you" → `THANK-YOU`)
+3. drop function words (articles, copulas, Urdu case markers)
+4. map to glosses; unknown tokens pass through for fingerspelling (grapheme-aware, so
+   unknown Urdu words fingerspell correctly once letter clips exist)
+5. reorder: time words → front (topicalization), negation → sentence-final `NOT`,
+   WH-question words → end
+
+Examples (verified): "Where is the hospital?" → `HOSPITAL WHERE`; "I am not happy today" →
+`TODAY ME HAPPY NOT`; "سلام، آپ کا نام کیا ہے؟" → `HELLO YOU NAME WHAT`.
+
+**Honesty note:** the reordering rules are approximations from general sign-language
+linguistics (topic-comment, WH-final, negation-final), **not validated PSL grammar**.
+Validating and correcting them with Deaf PSL users is an explicit roadmap item, and the
+lexicon is a seed vocabulary, not a dictionary.
 
 ## Sign library
 
@@ -213,8 +239,9 @@ src/
   signs/clipLoader.ts   clip JSON -> THREE.AnimationClip (bone-name resolution)
   signs/library.ts      manifest/clip fetching -> SignLibrary
   player/SignPlayer.ts  gloss sequence playback: cross-fades, holds, expressions
+  engine/translate.ts   rule-based text -> gloss engine (seed) + lexicon loader
   ui/hud.ts             top-left overlay: title, avatar status, camera reset
-  ui/controls.ts        bottom bar: gloss input, transport, speed, gloss chips
+  ui/controls.ts        bottom bar: text input (engine), gloss input, transport, speed, chips
   main.ts               bootstrap + render loop (player.update before avatar.update)
   author/tracker.ts     MediaPipe init + Kalidokit solve -> clip-space bone frames
   author/recorder.ts    frame capture -> clip JSON, download, manifest snippet
