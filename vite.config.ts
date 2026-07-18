@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         author: resolve(__dirname, "author.html"),
+        study: resolve(__dirname, "study.html"),
       },
       output: {
         manualChunks: {

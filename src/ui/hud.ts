@@ -23,7 +23,12 @@ export function createHud(onResetCamera: () => void): Hud {
   authorLink.href = "/author.html";
   authorLink.textContent = "Sign authoring tool →";
 
-  panel.append(title, status, authorLink);
+  const studyLink = document.createElement("a");
+  studyLink.className = "hud-status";
+  studyLink.href = "/study.html";
+  studyLink.textContent = "Comprehension study →";
+
+  panel.append(title, status, authorLink, studyLink);
 
   const resetBtn = document.createElement("button");
   resetBtn.className = "hud-btn";

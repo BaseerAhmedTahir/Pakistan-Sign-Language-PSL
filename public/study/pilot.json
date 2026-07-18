@@ -1,0 +1,40 @@
+{
+  "title": "PSL Avatar Comprehension Pilot (placeholder vocabulary)",
+  "comment": "TEMPLATE study using the procedural placeholder signs. Replace items with real recorded PSL vocabulary before running with participants. Item fields: glosses (stimulus), optional nmf spans, question, type 'choice' (options + correct index) or 'open', rate: true adds a 1-5 clarity rating after the response.",
+  "randomize": true,
+  "items": [
+    {
+      "id": "p1",
+      "glosses": ["HELLO"],
+      "question": "What did the avatar sign?",
+      "type": "choice",
+      "options": ["Hello", "Thank you", "Goodbye", "Help"],
+      "correct": 0,
+      "rate": true
+    },
+    {
+      "id": "p2",
+      "glosses": ["A", "L", "I"],
+      "question": "Which name was fingerspelled?",
+      "type": "choice",
+      "options": ["ALI", "BILA", "AIL", "LIA"],
+      "correct": 0,
+      "rate": true
+    },
+    {
+      "id": "p3",
+      "glosses": ["HELLO", "NOT"],
+      "nmf": [{ "start": 1, "end": 2, "head": "shake", "label": "negation headshake" }],
+      "question": "Describe what the avatar signed.",
+      "type": "open",
+      "rate": true
+    },
+    {
+      "id": "p4",
+      "glosses": ["B", "A", "L", "I"],
+      "question": "Type the letters that were fingerspelled.",
+      "type": "open",
+      "rate": true
+    }
+  ]
+}

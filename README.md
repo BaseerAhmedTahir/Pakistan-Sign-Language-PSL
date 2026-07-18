@@ -42,6 +42,8 @@ dated HamNoSys → SiGML → JASigning pipeline.
 - ✅ **Non-manual features tier (rung 3 start)** — sentence-level facial/head grammar as a
   second annotation tier: WH-questions carry a brow furrow, yes/no questions a brow raise,
   negation a procedural headshake. See "Non-manual features" below.
+- ✅ **Comprehension study tool** — `/study.html`: anonymous, facilitator-driven evaluation
+  sessions with replay counting, response times, clarity ratings, JSON/CSV export.
 
 ## Run
 
@@ -161,6 +163,25 @@ purpose-built PSL avatar with dedicated brow blendshapes is the eventual fix.
 Same honesty note as the word-order rules: these NMF rules are cross-linguistic
 approximations pending validation with Deaf PSL users.
 
+## Comprehension study tool (`/study.html`)
+
+The validation instrument the project's credibility rests on ("evaluated with N Deaf PSL
+users, X% comprehension"), built before the study rather than after. Facilitator-driven
+flow per participant:
+
+1. Setup: anonymous participant code, group (Deaf / hard of hearing / hearing),
+   self-reported PSL fluency, optional item-order randomization.
+2. Per item: the avatar performs the stimulus (gloss sequence + optional NMF spans);
+   replays are allowed and **counted**; the participant answers a multiple-choice or open
+   question; optionally rates clarity 1–5. Response time from first viewing is recorded.
+3. Completion: on-screen summary (choice-item accuracy, mean clarity) and **JSON + CSV
+   export** for analysis.
+
+Studies are data files — see [public/study/pilot.json](public/study/pilot.json) for the
+format. The shipped pilot uses placeholder vocabulary and is a **template**: replace its
+items with real recorded PSL signs before running with participants. No personal data is
+collected by design; obtain informed consent and follow local ethics guidance.
+
 ## Sign library
 
 `public/signs/manifest.json`:
@@ -271,6 +292,7 @@ src/
   author/tracker.ts     MediaPipe init + Kalidokit solve -> clip-space bone frames
   author/recorder.ts    frame capture -> clip JSON, download, manifest snippet
   author/main.ts        /author.html app: live drive, record, preview, export
+  study/main.ts         /study.html app: comprehension sessions + JSON/CSV export
 scripts/
   generate-clips.mjs    procedural starter clips + manifest (npm run gen:clips)
 ```
