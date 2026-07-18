@@ -39,6 +39,9 @@ dated HamNoSys → SiGML → JASigning pipeline.
   Space-flip defaults confirmed on real footage).*
 - ✅ **Engine seed (Phase 2 start)** — rule-based English/Urdu text → gloss translation
   behind the same `play()` contract; see "Translation engine (seed)" below.
+- ✅ **Non-manual features tier (rung 3 start)** — sentence-level facial/head grammar as a
+  second annotation tier: WH-questions carry a brow furrow, yes/no questions a brow raise,
+  negation a procedural headshake. See "Non-manual features" below.
 
 ## Run
 
@@ -135,6 +138,28 @@ Examples (verified): "Where is the hospital?" → `HOSPITAL WHERE`; "I am not ha
 linguistics (topic-comment, WH-final, negation-final), **not validated PSL grammar**.
 Validating and correcting them with Deaf PSL users is an explicit roadmap item, and the
 lexicon is a seed vocabulary, not a dictionary.
+
+## Non-manual features (the differentiator)
+
+NMF is modeled as a **second annotation tier**, mirroring sign-linguistics multi-tier
+glossing: `SignPlayer.play()` accepts `{ glosses, nmf }` where each `NmfSpan` covers a range
+of gloss indices with expression weights and/or procedural head motion. Two levels:
+
+- **Sign-level** (`nmf` in the manifest): expression weights ramped over a single sign's
+  cross-fade and held for its duration (e.g. HELLO carries `happy: 0.4`).
+- **Sentence-level** (spans from the engine): WH-question → brow furrow (`angry: 0.35`)
+  across the whole question; yes/no question (`?`/`؟`, no WH word) → brow raise
+  (`surprised: 0.4`); negation → **headshake** during the `NOT` sign, implemented as a
+  multiplicative overlay on the head bone (applied after the mixer, removed before the next
+  mixer pass, so it composes with — and never fights — whatever the clips animate).
+
+Span expressions merge under sign-level ones (the sign wins on conflicts). Expressions the
+avatar lacks are silent no-ops — note that **VRM 0.x models have no `surprised`** blendshape
+(VRM0 ships joy/angry/sorrow/fun), so the brow-raise renders on VRM1/custom avatars only; a
+purpose-built PSL avatar with dedicated brow blendshapes is the eventual fix.
+
+Same honesty note as the word-order rules: these NMF rules are cross-linguistic
+approximations pending validation with Deaf PSL users.
 
 ## Sign library
 

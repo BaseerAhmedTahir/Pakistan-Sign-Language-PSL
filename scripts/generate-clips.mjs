@@ -177,6 +177,23 @@ clips.push(hold("letter_l", letterPose({
   rightThumbProximal: [0, -15, 0],
 })));
 
+// NOT: raised index finger wagging side to side (placeholder negation
+// sign; the sentence-level headshake NMF rides on top of it).
+const NOT_BASE = letterPose({
+  ...curl("right", ["Middle", "Ring", "Little"]),
+  rightThumbMetacarpal: [0, -20, 25],
+  rightThumbProximal: [0, -5, 20],
+});
+const notWag = (handY) => ({ ...NOT_BASE, rightHand: [0, handY, 0] });
+clips.push(makeClip("not", [
+  [0.0, NOT_BASE],
+  [0.2, notWag(-22)],
+  [0.4, notWag(22)],
+  [0.6, notWag(-22)],
+  [0.8, notWag(22)],
+  [1.0, NOT_BASE],
+]));
+
 // ---- Manifest ----
 
 const manifest = {
@@ -190,6 +207,7 @@ const manifest = {
   signs: [
     { gloss: "REST", clip: "rest.json", type: "rest" },
     { gloss: "HELLO", clip: "hello.json", type: "word", nmf: { happy: 0.4 } },
+    { gloss: "NOT", clip: "not.json", type: "word" },
     { gloss: "A", clip: "letter_a.json", type: "letter" },
     { gloss: "B", clip: "letter_b.json", type: "letter" },
     { gloss: "I", clip: "letter_i.json", type: "letter" },

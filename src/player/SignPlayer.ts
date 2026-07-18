@@ -2,6 +2,30 @@ import * as THREE from "three";
 import type { LoadedAvatar } from "../avatar/loadAvatar";
 import type { SignLibrary, SignDef } from "../signs/library";
 
+/**
+ * A non-manual-feature span: sentence-level facial/head grammar riding on
+ * a range of glosses ([start, end) indices into GlossSequence.glosses).
+ * This is the second annotation tier — sign linguistics' multi-tier
+ * glossing, e.g. brow furrow spread across a WH-question, or a headshake
+ * over negation.
+ */
+export interface NmfSpan {
+  start: number;
+  end: number;
+  /** VRM expression name -> weight, held for the span's duration. */
+  expressions?: Record<string, number>;
+  /** Procedural head motion overlaid on whatever the clips do. */
+  head?: "shake";
+  /** Human-readable rule name, for traces/demos. */
+  label?: string;
+}
+
+/** The full engine output: gloss tier + optional non-manual tier. */
+export interface GlossSequence {
+  glosses: string[];
+  nmf?: NmfSpan[];
+}
+
 /** One scheduled sign in a resolved sequence. */
 interface PlayItem {
   /** Display label — the letter itself when fingerspelling. */
@@ -9,6 +33,8 @@ interface PlayItem {
   def: SignDef;
   fadeS: number;
   holdS: number;
+  /** Index into the source gloss array (letters share their word's index). */
+  sourceIndex: number;
 }
 
 interface ActiveSequence {
@@ -22,6 +48,8 @@ interface ActiveSequence {
 }
 
 export type PlayerState = "idle" | "playing" | "paused";
+
+const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
 const GRAPHEME_SEGMENTER =
   typeof Intl !== "undefined" && "Segmenter" in Intl
@@ -62,7 +90,16 @@ export class SignPlayer {
   private paused = false;
   private activeAction: THREE.AnimationAction;
   private seq: ActiveSequence | null = null;
-  private lastSequence: string[] = [];
+  private lastSequence: GlossSequence = { glosses: [] };
+  private spans: NmfSpan[] = [];
+
+  /** Procedural headshake overlay state (negation NMF). */
+  private shakeActive = false;
+  private shakeAmp = 0;
+  private shakePhase = 0;
+  private readonly shakeQ = new THREE.Quaternion();
+  private readonly prevShakeInv = new THREE.Quaternion();
+  private hasPrevShake = false;
 
   /** Expression channel state: name -> weight. */
   private exprCurrent = new Map<string, number>();
@@ -92,22 +129,28 @@ export class SignPlayer {
 
   /** True once a sequence has been played (enables Replay in the UI). */
   get hasPlayed(): boolean {
-    return this.lastSequence.length > 0;
+    return this.lastSequence.glosses.length > 0;
   }
 
   /**
-   * Play a gloss sequence. Known glosses play their clip; unknown glosses
-   * are fingerspelled letter-by-letter. Resolves once the avatar is back
-   * at rest. Calling while already playing cancels the running sequence
-   * and starts the new one from the current pose.
+   * Play a gloss sequence — a plain `string[]`, or a GlossSequence whose
+   * `nmf` spans add sentence-level facial/head grammar. Known glosses play
+   * their clip; unknown glosses are fingerspelled letter-by-letter.
+   * Resolves once the avatar is back at rest. Calling while already
+   * playing cancels the running sequence and starts the new one from the
+   * current pose.
    */
-  play(glossSequence: string[]): Promise<void> {
+  play(input: string[] | GlossSequence): Promise<void> {
+    const sequence: GlossSequence = Array.isArray(input) ? { glosses: input } : input;
     this.cancelCurrent();
-    this.lastSequence = [...glossSequence];
+    this.lastSequence = { glosses: [...sequence.glosses], nmf: sequence.nmf };
+    this.spans = sequence.nmf ?? [];
 
-    const items = glossSequence.flatMap((g) => this.resolveGloss(g));
+    const items = sequence.glosses.flatMap((g, i) =>
+      this.resolveGloss(g).map((item) => ({ ...item, sourceIndex: i }))
+    );
     if (items.length === 0) {
-      console.warn("[player] nothing playable in sequence", glossSequence);
+      console.warn("[player] nothing playable in sequence", sequence.glosses);
       return Promise.resolve();
     }
 
@@ -140,13 +183,39 @@ export class SignPlayer {
     if (this.seq) this.beginToRest();
   }
 
-  /** Advance both channels. Call once per frame, before avatar.update(). */
+  /** Advance all channels. Call once per frame, before avatar.update(). */
   update(delta: number): void {
     this.mixer.timeScale = this.paused ? 0 : this.speed;
     const scaled = delta * this.mixer.timeScale;
+
+    // Remove last frame's headshake overlay BEFORE the mixer runs: if a
+    // clip animates the head this is overwritten anyway; if not, it
+    // restores the base pose so the overlay never accumulates.
+    const head = this.avatar.bones.get("head");
+    if (head && this.hasPrevShake) {
+      head.quaternion.multiply(this.prevShakeInv);
+      this.hasPrevShake = false;
+    }
+
     this.mixer.update(delta);
     this.updateSequence(scaled);
     this.updateExpressions(scaled);
+    this.updateHeadshake(head, scaled);
+  }
+
+  /** Procedural negation headshake, overlaid multiplicatively on the head. */
+  private updateHeadshake(head: THREE.Object3D | undefined, scaledDelta: number): void {
+    const AMPLITUDE = 0.14; // rad
+    const FREQUENCY = 2.6; // Hz
+    const target = this.shakeActive && this.seq ? AMPLITUDE : 0;
+    this.shakeAmp += (target - this.shakeAmp) * Math.min(1, scaledDelta * 8);
+    if (!head || this.shakeAmp < 1e-3) return;
+    this.shakePhase += scaledDelta;
+    const angle = this.shakeAmp * Math.sin(this.shakePhase * Math.PI * 2 * FREQUENCY);
+    this.shakeQ.setFromAxisAngle(Y_AXIS, angle);
+    head.quaternion.multiply(this.shakeQ);
+    this.prevShakeInv.copy(this.shakeQ).invert();
+    this.hasPrevShake = true;
   }
 
   // ---- sequence scheduling ----
@@ -183,6 +252,7 @@ export class SignPlayer {
       def,
       fadeS: (def.fadeMs ?? (isLetter ? d.letterFadeMs : d.wordFadeMs)) / 1000,
       holdS: (def.holdMs ?? (isLetter ? d.letterHoldMs : d.wordHoldMs)) / 1000,
+      sourceIndex: 0, // set by play() once the item's gloss index is known
     };
   }
 
@@ -217,7 +287,16 @@ export class SignPlayer {
     seq.phase = "sign";
     seq.phaseElapsedS = 0;
 
-    this.setExpressionTargets(item.def.nmf, item.fadeS);
+    // Merge sentence-level span expressions with the sign's own nmf
+    // (sign-specific values win on conflicts), and activate any head
+    // motion spans covering this item's source gloss.
+    const active = this.spans.filter((s) => item.sourceIndex >= s.start && item.sourceIndex < s.end);
+    const expressions: Record<string, number> = {};
+    for (const span of active) Object.assign(expressions, span.expressions);
+    Object.assign(expressions, item.def.nmf);
+    this.setExpressionTargets(Object.keys(expressions).length > 0 ? expressions : undefined, item.fadeS);
+    this.shakeActive = active.some((s) => s.head === "shake");
+
     this.onGlossChange?.(item.gloss);
   }
 
@@ -240,6 +319,7 @@ export class SignPlayer {
     seq.action = null;
 
     this.setExpressionTargets(undefined, fadeS);
+    this.shakeActive = false;
     this.onGlossChange?.(null);
   }
 
@@ -274,6 +354,7 @@ export class SignPlayer {
   }
 
   private cancelCurrent(): void {
+    this.shakeActive = false;
     if (this.seq) {
       this.seq.resolve();
       this.seq = null;

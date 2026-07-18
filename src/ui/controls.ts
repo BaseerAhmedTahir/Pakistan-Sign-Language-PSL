@@ -111,11 +111,13 @@ export function createControls(player: SignPlayer, library: SignLibrary, lexicon
     if (!lexicon) return;
     const text = textInput.value.trim();
     if (!text) return;
-    const { glosses, trace } = translate(text, lexicon);
-    console.info(`[engine] "${text}" ->`, glosses, trace);
+    const { glosses, nmf, trace } = translate(text, lexicon);
+    console.info(`[engine] "${text}" ->`, glosses, nmf, trace);
     if (glosses.length === 0) return;
+    // Show the gloss tier in the gloss input, but play the ANNOTATED
+    // sequence so sentence-level NMF spans reach the player.
     input.value = glosses.join(" ");
-    doPlay();
+    void player.play({ glosses, nmf });
   };
   translateBtn.addEventListener("click", doTranslate);
   textInput.addEventListener("keydown", (e) => {

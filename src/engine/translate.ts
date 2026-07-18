@@ -28,14 +28,24 @@ export interface Lexicon {
   negation: { words: string[]; gloss: string };
 }
 
+import type { NmfSpan } from "../player/SignPlayer";
+
 export interface TraceStep {
   token: string;
-  action: "map" | "drop" | "fingerspell" | "reorder";
+  action: "map" | "drop" | "fingerspell" | "reorder" | "nmf";
   detail: string;
 }
 
 export interface Translation {
   glosses: string[];
+  /**
+   * Non-manual tier: sentence-level facial/head grammar spans over the
+   * gloss sequence. Derived from sentence structure the rules already
+   * detect — WH-questions carry a brow furrow, yes/no questions a brow
+   * raise, negation a headshake. Same honesty note as the word-order
+   * rules: approximations, not validated PSL grammar.
+   */
+  nmf: NmfSpan[];
   trace: TraceStep[];
 }
 
@@ -127,5 +137,20 @@ export function translate(text: string, lexicon: Lexicon): Translation {
   if (sawNegation) result.push(lexicon.negation.gloss);
   result.push(...wh);
 
-  return { glosses: result, trace };
+  // 7. Non-manual tier (spans over the FINAL gloss order).
+  const nmf: NmfSpan[] = [];
+  if (wh.length > 0) {
+    nmf.push({ start: 0, end: result.length, expressions: { angry: 0.35 }, label: "wh-question brow furrow" });
+    trace.push({ token: wh.join(" "), action: "nmf", detail: "brow furrow over whole question" });
+  } else if (/[?؟]/.test(text)) {
+    nmf.push({ start: 0, end: result.length, expressions: { surprised: 0.4 }, label: "yes/no question brow raise" });
+    trace.push({ token: "?", action: "nmf", detail: "brow raise over yes/no question" });
+  }
+  if (sawNegation) {
+    const notIndex = result.lastIndexOf(lexicon.negation.gloss);
+    nmf.push({ start: notIndex, end: notIndex + 1, head: "shake", label: "negation headshake" });
+    trace.push({ token: lexicon.negation.gloss, action: "nmf", detail: "headshake on negation" });
+  }
+
+  return { glosses: result, nmf, trace };
 }

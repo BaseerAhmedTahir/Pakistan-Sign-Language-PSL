@@ -21,6 +21,11 @@
       }
     },
     {
+      "gloss": "NOT",
+      "clip": "not.json",
+      "type": "word"
+    },
+    {
       "gloss": "A",
       "clip": "letter_a.json",
       "type": "letter"
