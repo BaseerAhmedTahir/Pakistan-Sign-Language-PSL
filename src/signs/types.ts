@@ -24,6 +24,23 @@ export interface ClipJson {
 
 export type SignType = "word" | "letter" | "rest";
 
+/** Dataset metadata carried by each sign (see docs/DATASHEET.md). */
+export interface SignMeta {
+  english?: string;
+  urdu?: string;
+  /** e.g. "greeting", "hospital", "fingerspelling-latin", "fingerspelling-urdu" */
+  category?: string;
+  /**
+   * placeholder = procedural stand-in, NOT a verified PSL sign;
+   * recorded  = captured from a signer (authoring tool or converted data);
+   * validated = reviewed/approved by Deaf PSL users or experts.
+   */
+  status?: "placeholder" | "recorded" | "validated";
+  /** Anonymous signer code for recorded signs, e.g. "S01". */
+  signer?: string;
+  method?: "procedural" | "mocap-webcam" | "converted" | "manual";
+}
+
 /** One entry in /public/signs/manifest.json. */
 export interface ManifestEntryJson {
   /** Uppercase gloss label; single character for fingerspelling letters. */
@@ -41,6 +58,8 @@ export interface ManifestEntryJson {
    * is a later phase; this is the first-class hook for it.
    */
   nmf?: Record<string, number>;
+  /** Dataset metadata (ignored by playback; used by dataset export). */
+  meta?: SignMeta;
 }
 
 /** Playback rhythm defaults; word vs letter matters (fingerspelling needs

@@ -3,13 +3,15 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "license": "MIT",
   "description": "Pakistan Sign Language signing avatar renderer — Phase 1 (gloss-sequence driven, Three.js)",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "gen:clips": "node scripts/generate-clips.mjs",
-    "fetch:samples": "node scripts/fetch-samples.mjs"
+    "fetch:samples": "node scripts/fetch-samples.mjs",
+    "dataset:export": "node scripts/export-dataset.mjs"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.35",

@@ -10,7 +10,13 @@
     {
       "gloss": "REST",
       "clip": "rest.json",
-      "type": "rest"
+      "type": "rest",
+      "meta": {
+        "english": "neutral rest pose",
+        "category": "system",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     },
     {
       "gloss": "HELLO",
@@ -18,32 +24,70 @@
       "type": "word",
       "nmf": {
         "happy": 0.4
+      },
+      "meta": {
+        "english": "hello",
+        "urdu": "سلام",
+        "category": "greeting",
+        "status": "placeholder",
+        "method": "procedural"
       }
     },
     {
       "gloss": "NOT",
       "clip": "not.json",
-      "type": "word"
+      "type": "word",
+      "meta": {
+        "english": "not / negation",
+        "urdu": "نہیں",
+        "category": "grammar",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     },
     {
       "gloss": "A",
       "clip": "letter_a.json",
-      "type": "letter"
+      "type": "letter",
+      "meta": {
+        "english": "letter A",
+        "category": "fingerspelling-latin",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     },
     {
       "gloss": "B",
       "clip": "letter_b.json",
-      "type": "letter"
+      "type": "letter",
+      "meta": {
+        "english": "letter B",
+        "category": "fingerspelling-latin",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     },
     {
       "gloss": "I",
       "clip": "letter_i.json",
-      "type": "letter"
+      "type": "letter",
+      "meta": {
+        "english": "letter I",
+        "category": "fingerspelling-latin",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     },
     {
       "gloss": "L",
       "clip": "letter_l.json",
-      "type": "letter"
+      "type": "letter",
+      "meta": {
+        "english": "letter L",
+        "category": "fingerspelling-latin",
+        "status": "placeholder",
+        "method": "procedural"
+      }
     }
   ]
 }

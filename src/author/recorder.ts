@@ -81,6 +81,11 @@ export class Recorder {
 
   /** The manifest entry to append for this clip. */
   manifestEntry(gloss: string, clipFile: string, type: "word" | "letter"): string {
-    return JSON.stringify({ gloss: gloss.toUpperCase(), clip: clipFile, type });
+    return JSON.stringify({
+      gloss: gloss.toUpperCase(),
+      clip: clipFile,
+      type,
+      meta: { status: "recorded", method: "mocap-webcam", signer: "S01" },
+    });
   }
 }

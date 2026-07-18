@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software or the PSL sign clip dataset, please cite it as below."
+title: "Pakistan Sign Language Signing Avatar"
+type: software
+authors:
+  - family-names: "Tahir"
+    given-names: "Baseer Ahmed"
+repository-code: "https://github.com/BaseerAhmedTahir/Pakistan-Sign-Language-PSL"
+license: MIT
+keywords:
+  - Pakistan Sign Language
+  - PSL
+  - sign language avatar
+  - text-to-sign translation
+  - accessibility
+  - VRM
+abstract: >-
+  A modern, web-based, open-source Pakistan Sign Language signing avatar:
+  a rigged VRM character that performs gloss sequences in the browser with
+  non-manual (facial) grammar support, plus a webcam-based sign authoring
+  tool, a rule-based English/Urdu text-to-gloss engine, a comprehension
+  study tool, and a growing gloss-to-animation-clip dataset.

@@ -228,6 +228,25 @@ placeholder and a real VRM identically.
 (The shipped clips are procedural placeholders, **not** verified PSL handshapes — they prove
 the pipeline until clips are recorded with a PSL signer.)
 
+## Dataset
+
+`public/signs/` doubles as the **PSL Signs dataset** — to our knowledge the first open
+gloss → animation-clip dataset for PSL (existing PSL datasets target *recognition*;
+production needs the inverse resource). Each sign carries metadata (`meta`): English/Urdu
+translation, category, capture method, anonymous signer code, and a review status
+(`placeholder` → `recorded` → `validated`). Docs:
+
+- [docs/DATASHEET.md](docs/DATASHEET.md) — datasheet (Gebru et al. structure), collection
+  and review pipeline, licensing.
+- [docs/DATASETS.md](docs/DATASETS.md) — survey of existing PSL datasets (WLPSL, PakSign,
+  PSL SignBank, UAlpha40, …) and the planned WLPSL → clip conversion path.
+- `npm run dataset:export` — builds a versioned, self-describing bundle
+  (`dataset-dist/psl-signs-v<version>/` with clips, stats index, datasheet, license).
+
+## License
+
+MIT (code and dataset) — see [LICENSE](LICENSE). Cite via [CITATION.cff](CITATION.cff).
+
 ## Player internals (why it's built this way)
 
 - **Update order**: each frame runs `player.update(delta)` (skeletal mixer, then expression
