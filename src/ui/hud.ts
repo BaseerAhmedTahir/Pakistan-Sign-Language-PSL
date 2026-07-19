@@ -1,3 +1,5 @@
+import { assetUrl } from "../config";
+
 export interface Hud {
   setStatus: (text: string, warn?: boolean) => void;
 }
@@ -20,12 +22,12 @@ export function createHud(onResetCamera: () => void): Hud {
 
   const authorLink = document.createElement("a");
   authorLink.className = "hud-status";
-  authorLink.href = "/author.html";
+  authorLink.href = assetUrl("author.html");
   authorLink.textContent = "Sign authoring tool →";
 
   const studyLink = document.createElement("a");
   studyLink.className = "hud-status";
-  studyLink.href = "/study.html";
+  studyLink.href = assetUrl("study.html");
   studyLink.textContent = "Comprehension study →";
 
   panel.append(title, status, authorLink, studyLink);

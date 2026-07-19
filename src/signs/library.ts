@@ -1,4 +1,5 @@
 import type * as THREE from "three";
+import { assetUrl } from "../config";
 import type { LoadedAvatar } from "../avatar/loadAvatar";
 import { buildAnimationClip } from "./clipLoader";
 import {
@@ -53,7 +54,7 @@ export class SignLibrary {
  */
 export async function loadSignLibrary(
   avatar: LoadedAvatar,
-  baseUrl = "/signs/"
+  baseUrl = assetUrl("signs/")
 ): Promise<SignLibrary> {
   const manifestRes = await fetch(`${baseUrl}manifest.json`);
   if (!manifestRes.ok) throw new Error(`manifest.json: HTTP ${manifestRes.status}`);

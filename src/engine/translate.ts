@@ -28,6 +28,7 @@ export interface Lexicon {
   negation: { words: string[]; gloss: string };
 }
 
+import { assetUrl } from "../config";
 import type { NmfSpan } from "../player/SignPlayer";
 
 export interface TraceStep {
@@ -49,7 +50,7 @@ export interface Translation {
   trace: TraceStep[];
 }
 
-export async function loadLexicon(url = "/engine/lexicon.json"): Promise<Lexicon> {
+export async function loadLexicon(url = assetUrl("engine/lexicon.json")): Promise<Lexicon> {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`lexicon: HTTP ${res.status}`);
   const lex = (await res.json()) as Lexicon;

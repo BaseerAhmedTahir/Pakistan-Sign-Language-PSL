@@ -8,13 +8,22 @@
  * If the file is missing, a procedurally rigged placeholder mannequin with
  * VRM-spec bone names is used instead.
  */
-export const AVATAR_URL = "/avatar/avatar.vrm";
+/**
+ * Prefix a public-asset path with the deploy base (import.meta.env.BASE_URL
+ * is "/" in dev and e.g. "/Pakistan-Sign-Language-PSL/" on GitHub Pages).
+ */
+export function assetUrl(path: string): string {
+  return import.meta.env.BASE_URL + path.replace(/^\//, "");
+}
+
+export const AVATAR_URL = assetUrl("avatar/avatar.vrm");
 
 /**
  * The avatar can be overridden per-session with `?avatar=<url>` — used for
- * testing sample models (e.g. `?avatar=/avatar/samples/vrm0_alicia.vrm`)
- * without changing the configured default.
+ * testing sample models (e.g. `?avatar=/avatar/samples/vrm0_alicia.vrm`,
+ * relative to the deploy base) without changing the configured default.
  */
 export function resolveAvatarUrl(): string {
-  return new URLSearchParams(window.location.search).get("avatar") ?? AVATAR_URL;
+  const override = new URLSearchParams(window.location.search).get("avatar");
+  return override ? assetUrl(override) : AVATAR_URL;
 }

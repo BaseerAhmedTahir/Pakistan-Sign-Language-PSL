@@ -1,4 +1,4 @@
-import { resolveAvatarUrl } from "../config";
+import { assetUrl, resolveAvatarUrl } from "../config";
 import { createScene } from "../scene/createScene";
 import { loadAvatar } from "../avatar/loadAvatar";
 import { loadSignLibrary } from "../signs/library";
@@ -75,7 +75,7 @@ async function bootstrap(): Promise<void> {
     ctx.renderer.render(ctx.scene, ctx.camera);
   });
 
-  const configRes = await fetch("/study/pilot.json");
+  const configRes = await fetch(assetUrl("study/pilot.json"));
   if (!configRes.ok) throw new Error(`study config: HTTP ${configRes.status}`);
   const config = (await configRes.json()) as StudyConfig;
 
@@ -98,7 +98,7 @@ async function bootstrap(): Promise<void> {
 
   function renderSetup(): void {
     panel.innerHTML = `
-      <h2>Comprehension Study <a href="/">← player</a></h2>
+      <h2>Comprehension Study <a href="${import.meta.env.BASE_URL}">← player</a></h2>
       <p>${config.title}</p>
       <p class="muted">${config.items.length} items · avatar: ${avatarUrl}${avatar.source === "placeholder" ? " (placeholder rig — facial NMF inactive)" : ""}</p>
       <hr>

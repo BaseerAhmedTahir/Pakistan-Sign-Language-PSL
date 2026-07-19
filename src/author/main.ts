@@ -203,7 +203,7 @@ async function bootstrap(): Promise<void> {
     const panel = document.createElement("div");
     panel.className = "author-panel";
     panel.innerHTML = `
-      <p class="author-title">Sign Authoring <a href="/">← player</a></p>
+      <p class="author-title">Sign Authoring <a href="${import.meta.env.BASE_URL}">← player</a></p>
       <div class="author-section">
         <h3>Tracking</h3>
         <video class="mirrored" playsinline muted></video>
