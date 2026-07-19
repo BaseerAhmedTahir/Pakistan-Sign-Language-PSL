@@ -59,9 +59,9 @@ npm run build    # static production build in dist/
 `author.html` authoring tool, `study.html` comprehension study) — deployable to any static
 host. **GitHub Pages deploys automatically** on every push to `main` via
 [.github/workflows/deploy.yml](.github/workflows/deploy.yml) (the workflow sets `BASE_PATH`
-to the repo subpath; all asset URLs are base-aware via `assetUrl()`). If the first run's
-deploy step fails, enable it once: repo **Settings → Pages → Source: GitHub Actions**.
-Notes:
+to the repo subpath; all asset URLs are base-aware via `assetUrl()`). One-time setup:
+repo **Settings → Pages → Source: GitHub Actions** — the deploy job fails until then
+(the build/typecheck job runs regardless). Notes:
 
 - Sample VRMs (`npm run fetch:samples`) are git-ignored dev fixtures — don't ship them.
 - The authoring page fetches MediaPipe models (~17 MB) from Google's CDN at runtime;
