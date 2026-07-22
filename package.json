@@ -7,6 +7,7 @@
   "description": "Pakistan Sign Language signing avatar renderer — Phase 1 (gloss-sequence driven, Three.js)",
   "scripts": {
     "dev": "vite",
+    "test": "vitest run",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "gen:clips": "node scripts/generate-clips.mjs",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/three": "^0.169.0",
     "typescript": "^5.6.0",
-    "vite": "^5.4.0"
+    "vite": "^5.4.0",
+    "vitest": "^4.1.10"
   }
 }

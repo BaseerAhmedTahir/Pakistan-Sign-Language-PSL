@@ -24,6 +24,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm test
       # tsc runs inside the build script, so this is typecheck + build.
       - run: npm run build
         env:

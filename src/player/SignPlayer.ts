@@ -57,7 +57,7 @@ const GRAPHEME_SEGMENTER =
     : null;
 
 /** Split into grapheme clusters (falls back to code points). */
-function graphemes(text: string): string[] {
+export function graphemes(text: string): string[] {
   if (GRAPHEME_SEGMENTER) {
     return [...GRAPHEME_SEGMENTER.segment(text)].map((s) => s.segment);
   }
