@@ -1,5 +1,9 @@
 # PSL Signing Avatar
 
+**▶ Live demo: https://baseerahmedtahir.github.io/Pakistan-Sign-Language-PSL/**
+([authoring tool](https://baseerahmedtahir.github.io/Pakistan-Sign-Language-PSL/author.html) ·
+[comprehension study](https://baseerahmedtahir.github.io/Pakistan-Sign-Language-PSL/study.html))
+
 A modern, web-based, open-source **Pakistan Sign Language (PSL) signing avatar** renderer.
 Phase 1 of a text-to-PSL platform: a rigged 3D character in the browser (Three.js) that will
 perform sign sequences, designed from the start to support non-manual (facial) grammar —
